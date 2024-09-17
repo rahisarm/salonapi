@@ -20,6 +20,6 @@ public class Branch {
     private Long docno;
 
     @Column(name = "branchname")
-    private String branchname;
+    private String refname;
 
 }

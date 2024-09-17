@@ -12,5 +12,5 @@ import lombok.Setter;
 public class BranchDTO {
 
     private Long docno;
-    private String branchname;
+    private String refname;
 }
