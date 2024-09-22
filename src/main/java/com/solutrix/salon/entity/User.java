@@ -1,25 +1,32 @@
 package com.solutrix.salon.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Date;
+
+@Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@NoArgsConstructor
 @Table(name = "my_user")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "doc_no")
-    private int docNo;
-    @Column(name = "username")
-    private String username;
-    @Column(name = "password")
-    private String password;
+    private int docno;
+    private String username,fullname,password,email,mobile;
+    private int status,roleid,userid,brhid;
+    private Date date;
+    @Column(name="voc_no")
+    private int vocno;
+
+
 
 }

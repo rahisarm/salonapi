@@ -7,10 +7,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class BranchDTO {
+@NoArgsConstructor
+public class LoginDTO {
+	 private String username;
+	 private String password;
 
-    private Long docno;
-    private String refname;
 }
+

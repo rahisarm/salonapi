@@ -1,25 +1,34 @@
 package com.solutrix.salon.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.sql.Date;
+
+@Entity
 @Getter
 @Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
 @Table(name = "my_brch")
 public class Branch {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "doc_no")
-    private Long docno;
+    private int docno;
 
-    @Column(name = "branchname")
-    private String refname;
+    @Column(name="branchname")
+    private String branchname;
 
+    @Column(name = "mobile")
+    private String mobile;
+
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "status")
+    private int status;
+
+    @Column(name = "date")
+    private Date date;
 }
