@@ -17,7 +17,7 @@ public class UserController {
     @Autowired
     private UserService service;
 
-    @GetMapping("/{brhid}")
+    @GetMapping("/all/{brhid}")
     public List<User> getAllUsers(@PathVariable int brhid) {
         return service.getAllUsers(brhid);
     }

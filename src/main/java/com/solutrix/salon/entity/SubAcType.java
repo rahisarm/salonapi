@@ -16,24 +16,17 @@ import java.sql.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "my_user")
-public class User {
+@Table(name = "my_subactype")
+public class SubAcType {
     @Id
     @Column(name = "doc_no")
     private int docno;
-    private String username;
-    private String fullname;
-    private String password;
-    private String email;
-    private String mobile;
-    private int status;
-    private int roleid;
+    private String typename;
     private int userid;
     private int brhid;
+    private int status;
     private Date date;
-    @Column(name="voc_no")
+    @Column(name = "voc_no")
     private int vocno;
-
-
 
 }

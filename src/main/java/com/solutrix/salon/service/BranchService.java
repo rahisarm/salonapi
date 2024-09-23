@@ -43,6 +43,8 @@ public class BranchService {
         System.out.println("Doc No:"+branch.getDocno());
         return repo.save(branch);
     }
+
+    @Transactional
     public Branch updateBranch(int id, Branch branch) {
         Branch branchitem=repo.findById(id).orElseThrow(()-> new ResourceNotFoundException("Branch Not Found"));
         branchitem.setBranchname(branch.getBranchname());
@@ -52,6 +54,7 @@ public class BranchService {
         return repo.save(branchitem);
     }
 
+    @Transactional
     public void deleteBranch(int id) {
         Branch branchitem=repo.findById(id).orElseThrow(()-> new ResourceNotFoundException("Branch Not Found"));
         branchitem.setStatus(7);

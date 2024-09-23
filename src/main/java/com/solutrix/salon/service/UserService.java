@@ -47,9 +47,10 @@ public class UserService {
         user.setDocno(maxDocNo.orElse(0) + 1);
         user.setDate(Date.valueOf(LocalDate.now()));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setVocno(maxDocNo.orElse(0) + 1);
+        user.setVocno(maxVocNo.orElse(0) + 1);
         return repo.save(user);
     }
+    
     public User updateUser(int id, User user) {
         User useritem=repo.findById(id).orElseThrow(()-> new ResourceNotFoundException("User Not Found"));
         useritem.setUsername(user.getUsername());

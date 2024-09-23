@@ -2,18 +2,15 @@ package com.solutrix.salon.controller;
 
 import com.solutrix.salon.dto.LoginDTO;
 import com.solutrix.salon.dto.JwtAuthResponse;
-import com.solutrix.salon.service.AuthService;
+import com.solutrix.salon.service.impl.AuthServiceImpl;
 
 import lombok.AllArgsConstructor;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @AllArgsConstructor
@@ -21,14 +18,16 @@ import java.util.Map;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final PasswordEncoder passwordEncoder;
-    private AuthService authService;
+	
+    private PasswordEncoder passwordEncoder;
+    private AuthServiceImpl authService;
+    
 
     // Build Login REST API
     @PostMapping("/login")
     public ResponseEntity<JwtAuthResponse> login(@RequestBody LoginDTO loginDto){
+    	System.out.println(loginDto.getUsername()+"   -   "+loginDto.getPassword());
         String token = authService.login(loginDto);
-
         JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
         jwtAuthResponse.setAccessToken(token);
 

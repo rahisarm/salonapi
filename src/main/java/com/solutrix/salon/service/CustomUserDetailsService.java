@@ -2,6 +2,9 @@ package com.solutrix.salon.service;
 
 import com.solutrix.salon.entity.User;
 import com.solutrix.salon.repository.UserRepo;
+
+import lombok.AllArgsConstructor;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,8 +14,10 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 
 @Service
+@AllArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
-    private UserRepo userRepository;
+    
+	private UserRepo userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
