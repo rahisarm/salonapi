@@ -1,5 +1,8 @@
 package com.solutrix.salon.service.impl;
 
+import com.solutrix.salon.entity.User;
+import com.solutrix.salon.exception.ResourceNotFoundException;
+import com.solutrix.salon.repository.UserRepo;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,7 +19,8 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-	 private AuthenticationManager authenticationManager;
+	private final UserRepo userRepo;
+	private AuthenticationManager authenticationManager;
 	 
 	 private JwtTokenProvider jwtTokenProvider;
 
@@ -30,7 +34,11 @@ public class AuthServiceImpl implements AuthService {
 
 	        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-	        String token = jwtTokenProvider.generateToken(authentication);
+			User user = userRepo.findByUsername(loginDto.getUsername())
+					.orElseThrow(() -> new ResourceNotFoundException("User not found with username: " + loginDto.getUsername()));
+			int userdocno = user.getDocno();  // Assuming User entity has a `docno` field
+
+			String token = jwtTokenProvider.generateToken(authentication,userdocno);
 
 	        return token;
 	    }

@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import javax.crypto.SecretKey;
 
 @Component
@@ -22,7 +24,7 @@ public class JwtTokenProvider {
     private long jwtExpirationDate;
 
     // generate JWT token
-    public String generateToken(Authentication authentication){
+    public String generateToken(Authentication authentication,int userdocno){
 
         String username = authentication.getName();
 
@@ -30,8 +32,11 @@ public class JwtTokenProvider {
 
         Date expireDate = new Date(currentDate.getTime() + jwtExpirationDate);
 
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userdocno", userdocno);
         String token = Jwts.builder()
                 .setSubject(username)
+                .setClaims(claims)
                 .setIssuedAt(new Date())
                 .setExpiration(expireDate)
                 .signWith(key())
@@ -44,6 +49,16 @@ public class JwtTokenProvider {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
 
+    //get User Doc No from Token
+    public int getUserDocno(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.get("userdocno", Integer.class);  // Extract userdocno from the token
+    }
     // get username from JWT token
     public String getUsername(String token){
 

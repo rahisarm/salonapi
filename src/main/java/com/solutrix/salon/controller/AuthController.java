@@ -1,5 +1,6 @@
 package com.solutrix.salon.controller;
 
+import com.solutrix.salon.component.JwtTokenProvider;
 import com.solutrix.salon.dto.LoginDTO;
 import com.solutrix.salon.dto.JwtAuthResponse;
 import com.solutrix.salon.service.impl.AuthServiceImpl;
@@ -15,10 +16,11 @@ import java.util.Map;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
-	
+
+    private final JwtTokenProvider jwtTokenProvider;
     private PasswordEncoder passwordEncoder;
     private AuthServiceImpl authService;
     
@@ -28,9 +30,10 @@ public class AuthController {
     public ResponseEntity<JwtAuthResponse> login(@RequestBody LoginDTO loginDto){
     	System.out.println(loginDto.getUsername()+"   -   "+loginDto.getPassword());
         String token = authService.login(loginDto);
+        int userdocno = jwtTokenProvider.getUserDocno(token);
         JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
         jwtAuthResponse.setAccessToken(token);
-
+        jwtAuthResponse.setUserdocno(userdocno);
         return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
     }
     @GetMapping("/test")

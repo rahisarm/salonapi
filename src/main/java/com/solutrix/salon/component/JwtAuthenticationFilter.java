@@ -36,12 +36,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	        // Get JWT token from HTTP request
 	        String token = getTokenFromRequest(request);
-
+			System.out.println("Token Recieved:"+token);
 	        // Validate Token
 	        if(StringUtils.hasText(token) && jwtTokenProvider.validateToken(token)){
 	            // get username from token
 	            String username = jwtTokenProvider.getUsername(token);
-
+				System.out.println("Username from Token:"+username);
 	            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
 	            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
