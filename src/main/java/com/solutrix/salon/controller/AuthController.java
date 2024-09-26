@@ -34,6 +34,7 @@ public class AuthController {
         JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
         jwtAuthResponse.setAccessToken(token);
         jwtAuthResponse.setUserdocno(userdocno);
+
         return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
     }
     @GetMapping("/test")

@@ -34,6 +34,7 @@ public class JwtTokenProvider {
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("userdocno", userdocno);
+        claims.put("username", username);
         String token = Jwts.builder()
                 .setSubject(username)
                 .setClaims(claims)
@@ -68,7 +69,8 @@ public class JwtTokenProvider {
                 .parseClaimsJws(token)
                 .getBody(); // Extract the body (claims)
 
-        return claims.getSubject();
+        //return claims.getSubject();
+        return claims.get("username", String.class);
     }
 
     // validate JWT token

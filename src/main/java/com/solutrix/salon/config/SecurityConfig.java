@@ -4,6 +4,7 @@ import com.solutrix.salon.component.JwtAuthenticationEntryPoint;
 import com.solutrix.salon.component.JwtAuthenticationFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -21,10 +22,16 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
+
 @Configuration
 @EnableMethodSecurity
 @AllArgsConstructor
 public class SecurityConfig {
+
+    /*@Value("${app.url}")
+    private String appurl;
+*/
     @Autowired
     private UserDetailsService userDetailsService;
 
@@ -40,7 +47,9 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http.csrf(csrf -> csrf.disable())
+        http
+                .cors(Customizer.withDefaults())
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests((authorize) -> {
                     authorize.requestMatchers(HttpMethod.POST, "/api/**");
                     authorize.requestMatchers(HttpMethod.PUT, "/api/**");
@@ -71,7 +80,9 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
         configuration.addAllowedOrigin("http://localhost:5173"); // Your frontend's URL
-        configuration.addAllowedHeader("*");
+        //configuration.addAllowedHeader("*");
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Cache-Control", "X-Requested-With", "Accept", "Origin","X-User-Docno"));
+
         configuration.addAllowedMethod("*"); // Allow all HTTP methods
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
