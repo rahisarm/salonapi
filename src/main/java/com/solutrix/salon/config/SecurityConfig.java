@@ -80,6 +80,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
         configuration.addAllowedOrigin("http://localhost:5173"); // Your frontend's URL
+        configuration.addAllowedHeader("*");
         //configuration.addAllowedHeader("*");
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Cache-Control", "X-Requested-With", "Accept", "Origin","X-User-Docno"));
 

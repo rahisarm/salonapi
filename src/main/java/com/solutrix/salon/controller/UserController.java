@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,8 +24,17 @@ public class UserController {
     }
 
     @PostMapping
-    public User createUser(@RequestBody User branch) {
-        return service.createUser(branch);
+    public User createUser(@RequestBody User user) {
+        System.out.println(user);
+        for (Field field : user.getClass().getDeclaredFields()) {
+            field.setAccessible(true);
+            try {
+                System.out.println(field.getName() + ": " + field.get(user));
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        return service.createUser(user);
     }
 
     @GetMapping("/{docno}")

@@ -14,6 +14,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
+        System.out.println("Cors: " + appurl);
         registry.addMapping("/**") // Allow all endpoints
                 .allowedOrigins(appurl) // Replace with your React app URL
                 //.allowedOriginPatterns("*")
