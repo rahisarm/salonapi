@@ -38,7 +38,7 @@ public class AuthController {
         return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
     }
     @GetMapping("/test")
-    public void test(@RequestBody Map<String, String> map){
-        System.out.println(passwordEncoder.encode(map.get("password")));
+    public void test(@RequestParam String password){
+        System.out.println(passwordEncoder.encode(password));
     }
 }

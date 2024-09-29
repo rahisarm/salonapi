@@ -1,5 +1,6 @@
 package com.solutrix.salon.service;
 
+import com.solutrix.salon.dto.UserDTO;
 import com.solutrix.salon.entity.User;
 import com.solutrix.salon.exception.ResourceNotFoundException;
 import com.solutrix.salon.repository.UserRepo;
@@ -30,8 +31,8 @@ public class UserService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public List<User> getAllUsers(int brhid) {
-        return repo.findAllActiveUsersByBranch(brhid);
+    public List<UserDTO> getAllUsers(int brhid) {
+        return repo.fetchAllUsersByBranch(brhid);
     }
 
     public Optional<User> getUserById(int docno) {
@@ -50,7 +51,8 @@ public class UserService {
         user.setVocno(maxVocNo.orElse(0) + 1);
         return repo.save(user);
     }
-    
+
+    @Transactional
     public User updateUser(int id, User user) {
         User useritem=repo.findById(id).orElseThrow(()-> new ResourceNotFoundException("User Not Found"));
         useritem.setUsername(user.getUsername());
@@ -62,10 +64,11 @@ public class UserService {
         return repo.save(useritem);
     }
 
+    @Transactional
     public void deleteUser(int id) {
-        User useritem=repo.findById(id).orElseThrow(()-> new ResourceNotFoundException("User Not Found"));
-        useritem.setStatus(7);
-        repo.save(useritem);
+        /*User useritem=repo.findById(id).orElseThrow(()-> new ResourceNotFoundException("User Not Found"));
+        useritem.setStatus(7);*/
+        repo.deleteById(id);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.solutrix.salon.controller;
 
+import com.solutrix.salon.dto.UserDTO;
 import com.solutrix.salon.entity.User;
 import com.solutrix.salon.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
@@ -19,21 +20,13 @@ public class UserController {
     private UserService service;
 
     @GetMapping("/all/{brhid}")
-    public List<User> getAllUsers(@PathVariable int brhid) {
+    public List<UserDTO> getAllUsers(@PathVariable int brhid) {
+        System.out.println(service.getAllUsers(brhid));
         return service.getAllUsers(brhid);
     }
 
     @PostMapping
     public User createUser(@RequestBody User user) {
-        System.out.println(user);
-        for (Field field : user.getClass().getDeclaredFields()) {
-            field.setAccessible(true);
-            try {
-                System.out.println(field.getName() + ": " + field.get(user));
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
         return service.createUser(user);
     }
 
@@ -44,16 +37,19 @@ public class UserController {
     }
 
     @DeleteMapping("/{docno}")
-    public ResponseEntity<User> deleteUser(@PathVariable int docno) {
-        Optional<User> branch = service.getUserById(docno);
-        service.deleteUser(docno);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity deleteUser(@PathVariable int docno) {
+        try {
+            service.deleteUser(docno);
+            return ResponseEntity.ok(true);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    @PutMapping("/{docno}")
-    public ResponseEntity<User> updateUser(@PathVariable int docno, @RequestBody User updatedUser) {
+    @PutMapping
+    public ResponseEntity<User> updateUser(@RequestBody User updatedUser) {
         try {
-            User updated = service.updateUser(docno, updatedUser);
+            User updated = service.updateUser(updatedUser.getDocno(), updatedUser);
             return ResponseEntity.ok(updated);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
