@@ -1,5 +1,6 @@
 package com.solutrix.salon.controller;
 
+import com.solutrix.salon.dto.ComboMasterDTO;
 import com.solutrix.salon.entity.ComboMaster;
 import com.solutrix.salon.service.ComboMasterService;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,7 +24,7 @@ public class ComboMasterController {
     }
 
     @PostMapping
-    public ComboMaster createAccount(@RequestBody ComboMaster comboMaster) {
+    public ComboMaster createAccount(@RequestBody ComboMasterDTO comboMaster) {
         return service.createComboMaster(comboMaster);
     }
 

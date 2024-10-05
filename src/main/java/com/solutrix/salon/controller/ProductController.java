@@ -18,7 +18,7 @@ public class ProductController {
     private ProductService service;
 
     @GetMapping("/all/{brhid}")
-    public List<Product> getA(@PathVariable int brhid) {
+    public List<Product> getAllProducts(@PathVariable int brhid) {
         return service.getAllProducts(brhid);
     }
 

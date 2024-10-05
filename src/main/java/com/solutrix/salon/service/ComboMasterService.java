@@ -1,5 +1,7 @@
 package com.solutrix.salon.service;
 
+import com.solutrix.salon.dto.ComboMasterDTO;
+import com.solutrix.salon.entity.ComboDetail;
 import com.solutrix.salon.entity.ComboMaster;
 import com.solutrix.salon.exception.ResourceNotFoundException;
 import com.solutrix.salon.repository.ComboDetailRepo;
@@ -41,14 +43,30 @@ public class ComboMasterService {
     }
 
     @Transactional
-    public ComboMaster createComboMaster(ComboMaster comboMaster) {
+    public ComboMaster createComboMaster(ComboMasterDTO dto) {
         entityManager.clear();
+        ComboMaster comboMaster = new ComboMaster();
         comboMaster.setStatus(3);
         Optional<Integer> maxDocNo = masterRepo.findMaxDocNo();
         Optional<Integer> maxVocNo = masterRepo.findMaxVocNo(comboMaster.getBrhid());
         comboMaster.setDocno(maxDocNo.orElse(0) + 1);
         comboMaster.setDate(Date.valueOf(LocalDate.now()));
         comboMaster.setVocno(maxVocNo.orElse(0) + 1);
+        comboMaster.setBrhid(dto.getBrhid());
+        comboMaster.setAmount(dto.getAmount());
+        comboMaster.setDescription(dto.getDescription());
+        comboMaster.setRefname(dto.getRefname());
+
+        List<ComboDetail> details = dto.getComboDetailList().stream()
+                .map(detailDTO -> {
+                    ComboDetail detail = new ComboDetail();
+                    detail.set(detailDTO.getPsrno());
+                    detail.setRefname(detailDTO.getRefname());
+                    detail.setAmount(detailDTO.getAmount());
+                    detail.setComboMaster(comboMaster);
+                    return detail;
+                }).collect(Collectors.toList());
+
         return masterRepo.save(comboMaster);
     }
 
