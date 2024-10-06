@@ -19,10 +19,29 @@ public class AccountController {
     private AccountService service;
 
     @GetMapping("/all/{brhid}")
-    public List<Account> getA(@PathVariable int brhid) {
+    public List<Account> getAccounts(@PathVariable int brhid) {
         return service.getAllAccounts(brhid);
     }
 
+    @GetMapping("/gl/{brhid}")
+    public List<Account> getGLAccounts(@PathVariable int brhid) {
+        return service.getGLAccounts(brhid);
+    }
+
+    @GetMapping("/ap/{brhid}")
+    public List<Account> getAPAccounts(@PathVariable int brhid) {
+        return service.getAPAccounts(brhid);
+    }
+
+    @GetMapping("/ar/{brhid}")
+    public List<Account> getARAccounts(@PathVariable int brhid) {
+        return service.getARAccounts(brhid);
+    }
+
+    @GetMapping("/hr/{brhid}")
+    public List<Account> getHRAccounts(@PathVariable int brhid) {
+        return service.getHRAccounts(brhid);
+    }
     @PostMapping
     public Account createAccount(@RequestBody Account account) {
         return service.createAccount(account);

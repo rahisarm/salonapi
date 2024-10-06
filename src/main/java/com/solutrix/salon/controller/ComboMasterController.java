@@ -5,6 +5,7 @@ import com.solutrix.salon.entity.ComboMaster;
 import com.solutrix.salon.service.ComboMasterService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,14 +19,20 @@ public class ComboMasterController {
     @Autowired
     private ComboMasterService service;
 
+//    @GetMapping("/list/{brhid}")
+//    public List<ComboMasterDTO> getComboList(@PathVariable int brhid) {
+//        return service.getComboList(brhid);
+//    }
     @GetMapping("/all/{brhid}")
     public List<ComboMaster> getComboMaster(@PathVariable int brhid) {
         return service.getAllComboMasters(brhid);
     }
 
     @PostMapping
-    public ComboMaster createAccount(@RequestBody ComboMasterDTO comboMaster) {
-        return service.createComboMaster(comboMaster);
+    public ResponseEntity<ComboMaster> createCombo(@RequestBody ComboMasterDTO comboDTO) {
+        System.out.println(comboDTO);
+        ComboMaster comboMaster = service.createComboMaster(comboDTO);
+        return new ResponseEntity<>(comboMaster, HttpStatus.CREATED);
     }
 
     @GetMapping("/{docno}")

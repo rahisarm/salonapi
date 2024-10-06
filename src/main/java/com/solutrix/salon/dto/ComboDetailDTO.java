@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ComboDetailDTO {
 
-    private Long psrno;
+    private int rdocno;
+    private int psrno;
     private String refname;
-    private Double amount;
-
+    private double amount;
 }

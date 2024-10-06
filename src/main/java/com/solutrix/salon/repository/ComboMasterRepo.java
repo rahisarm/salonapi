@@ -1,6 +1,7 @@
 package com.solutrix.salon.repository;
 
 
+import com.solutrix.salon.dto.ComboMasterDTO;
 import com.solutrix.salon.entity.Account;
 import com.solutrix.salon.entity.ComboMaster;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,4 +20,5 @@ public interface ComboMasterRepo extends JpaRepository<ComboMaster,Integer> {
     Optional<Integer> findMaxVocNo(@Param("brhid") int brhid);
 
     List<ComboMaster> findAllByBrhidIsAndAndStatusNot(Integer brhid, Integer status);
+
 }

@@ -1,5 +1,6 @@
 package com.solutrix.salon.service;
 
+import com.solutrix.salon.dto.ComboDetailDTO;
 import com.solutrix.salon.dto.ComboMasterDTO;
 import com.solutrix.salon.entity.ComboDetail;
 import com.solutrix.salon.entity.ComboMaster;
@@ -16,6 +17,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ComboMasterService {
@@ -33,6 +35,21 @@ public class ComboMasterService {
     @Autowired
     private ComboMasterRepo comboMasterRepo;
 
+//    public List<ComboMasterDTO> getComboList(int brhid){
+//        List<ComboMaster> masterlist=masterRepo.findAllByBrhidIsAndAndStatusNot(brhid,7);
+//        ComboMasterDTO dto=new ComboMasterDTO();
+//        return masterlist.stream().map(combo->{
+//            List<ComboDetailDTO> services=detailRepo.findAllByComboMasterIs(combo.getDocno());
+//            dto.setComboDetailList(services);
+//            dto.setDocno(combo.getDocno());
+//            dto.setDescription(combo.getDescription());
+//            dto.setDocno(combo.getDocno());
+//            dto.setAmount(combo.getAmount());
+//            dto.setDate(combo.getDate());
+//            dto.setRefname(combo.getRefname());
+//            return dto;
+//        }).collect(Collectors.toList());
+//    }
     public List<ComboMaster> getAllComboMasters(int brhid) {
         return masterRepo.findAllByBrhidIsAndAndStatusNot(brhid,7);
     }
@@ -60,12 +77,11 @@ public class ComboMasterService {
         List<ComboDetail> details = dto.getComboDetailList().stream()
                 .map(detailDTO -> {
                     ComboDetail detail = new ComboDetail();
-                    detail.set(detailDTO.getPsrno());
-                    detail.setRefname(detailDTO.getRefname());
-                    detail.setAmount(detailDTO.getAmount());
+                    detail.setPsrno(detailDTO.getPsrno());
                     detail.setComboMaster(comboMaster);
                     return detail;
                 }).collect(Collectors.toList());
+        comboMaster.setComboDetailList(details);
 
         return masterRepo.save(comboMaster);
     }

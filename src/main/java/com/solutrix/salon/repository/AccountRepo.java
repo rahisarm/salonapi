@@ -21,4 +21,6 @@ public interface AccountRepo extends JpaRepository<Account,Integer> {
     Optional<Account> findByAcname(String acname);
 
     List<Account> findAllByBrhidIsAndAndStatusNot(Integer brhid, Integer status);
+
+    List<Account> findAccountsByBrhidIsAndStatusNotAndActypeEqualsIgnoreCase(Integer brhid, Integer status,String actype);
 }

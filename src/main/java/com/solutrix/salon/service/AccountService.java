@@ -28,6 +28,22 @@ public class AccountService {
         return repo.findAllByBrhidIsAndAndStatusNot(brhid,7);
     }
 
+    public List<Account> getGLAccounts(int brhid) {
+        return repo.findAccountsByBrhidIsAndStatusNotAndActypeEqualsIgnoreCase(brhid,7,"GL");
+    }
+
+    public List<Account> getARAccounts(int brhid) {
+        return repo.findAccountsByBrhidIsAndStatusNotAndActypeEqualsIgnoreCase(brhid,7,"AR");
+    }
+
+    public List<Account> getAPAccounts(int brhid) {
+        return repo.findAccountsByBrhidIsAndStatusNotAndActypeEqualsIgnoreCase(brhid,7,"AP");
+    }
+
+    public List<Account> getHRAccounts(int brhid) {
+        return repo.findAccountsByBrhidIsAndStatusNotAndActypeEqualsIgnoreCase(brhid,7,"HR");
+    }
+
 
     public Optional<Account> getAccountById(int docno) {
         return repo.findById(docno);
