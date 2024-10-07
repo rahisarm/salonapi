@@ -13,10 +13,14 @@ import java.sql.Date;
 public class ExpenseDTO {
     private int docno;
     private int exptype;
+    private String exptypename;
     private int paytype;
+    private String paytypename;
     private String paytypeno;
     private String billno;
-    private int vendorid;
+    private int vendor;
+    private String vendorname;
+
     private double amount = 0.0;
     private double tax = 0.0;
     private double nettotal = 0.0;
@@ -26,6 +30,8 @@ public class ExpenseDTO {
     private int brhid;
     private Date date;
     private int trno;
-    private int expenseacno;
+    private int account;
+    private String accountname;
+
     private int vocno;
 }

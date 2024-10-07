@@ -1,15 +1,10 @@
 package com.solutrix.salon.service;
 
+import com.solutrix.salon.component.Common;
 import com.solutrix.salon.dto.ExpenseDTO;
-import com.solutrix.salon.entity.Account;
-import com.solutrix.salon.entity.ExpType;
-import com.solutrix.salon.entity.Expense;
-import com.solutrix.salon.entity.Jvtran;
+import com.solutrix.salon.entity.*;
 import com.solutrix.salon.exception.ResourceNotFoundException;
-import com.solutrix.salon.repository.ExpTypeRepo;
-import com.solutrix.salon.repository.ExpenseRepo;
-import com.solutrix.salon.repository.JvtranRepo;
-import com.solutrix.salon.repository.TrnoRepo;
+import com.solutrix.salon.repository.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,20 +25,67 @@ public class ExpenseService {
     private ExpenseRepo repo;
 
     @Autowired
-    private TrnoRepo trnoRepo;
-
-    @Autowired
     private JvtranRepo jvrepo;
 
     @Autowired
     private TrnoService trnoService;
 
+    @Autowired
+    private VendorRepo vendorRepo;
+
+    @Autowired
+    private PayTypeRepo payTypeRepo;
+
+    @Autowired
+    private ExpTypeRepo expTypeRepo;
+
+    @Autowired
+    private AccountRepo accountRepo;
+
+    @Autowired
+    private Common objcommon;
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public List<Expense> getAllExpenses(int brhid) {
-        return repo.findAllByBrhidIs(brhid);
+    public List<ExpenseDTO> getAllExpenses(int brhid) {
+        List<Expense> expenseList=repo.findAllByBrhidIs(brhid);
+        List<ExpenseDTO> expenseDTOList=new ArrayList<ExpenseDTO>();
+
+        expenseList.forEach(exp->{
+            ExpenseDTO expenseDTO=new ExpenseDTO();
+            expenseDTO.setAccount(exp.getExpenseacno());
+            expenseDTO.setAmount(exp.getAmount());
+            expenseDTO.setDate(exp.getDate());
+            expenseDTO.setBillno(exp.getBillno());
+            expenseDTO.setTax(exp.getTax());
+            expenseDTO.setNettotal(exp.getNettotal());
+            expenseDTO.setDocno(exp.getDocno());
+            expenseDTO.setExptype(exp.getExptype());
+            expenseDTO.setPaytype(exp.getPaytype());
+            expenseDTO.setPaytypeno(exp.getPaytypeno());
+            expenseDTO.setRemarks(exp.getRemarks());
+            expenseDTO.setVendor(exp.getVendorid());
+            expenseDTO.setVocno(exp.getVocno());
+            Optional<Vendor> vendor=vendorRepo.findById(exp.getVendorid());
+            if(vendor.isPresent()) {
+                expenseDTO.setVendorname(vendor.get().getRefname());
+            }
+            Optional<PayType> payType=payTypeRepo.findById(exp.getPaytype());
+            if(payType.isPresent()) {
+                expenseDTO.setPaytypename(payType.get().getRefname());
+            }
+            Optional<ExpType> expType=expTypeRepo.findById(exp.getExptype());
+            if(expType.isPresent()) {
+                expenseDTO.setExptypename(expType.get().getRefname());
+            }
+            Optional<Account> account=accountRepo.findById(exp.getExpenseacno());
+            if(account.isPresent()) {
+                expenseDTO.setAccountname(account.get().getAcname());
+            }
+            expenseDTOList.add(expenseDTO);
+        });
+        return expenseDTOList;
     }
 
     @Transactional
@@ -50,14 +93,14 @@ public class ExpenseService {
         entityManager.clear();
 
         int trno= trnoService.getNewTrno("EXP");
-
-
+        System.out.println(expenseDTO);
+        System.out.println("Date Recieved"+expenseDTO.getDate());
         Expense expense = new Expense();
         expense.setStatus(3);
         Optional<Integer> maxDocNo = repo.findMaxDocNo();
         Optional<Integer> maxVocNo = repo.findMaxVocNo(expense.getBrhid());
         expense.setDocno(maxDocNo.orElse(0) + 1);
-        expense.setDate(Date.valueOf(LocalDate.now()));
+        expense.setDate(expenseDTO.getDate());
         expense.setVocno(maxVocNo.orElse(0) + 1);
         expense.setTrno(trno);  // Assign generated trno
 
@@ -65,7 +108,7 @@ public class ExpenseService {
         expense.setPaytype(expenseDTO.getPaytype());
         expense.setPaytypeno(expenseDTO.getPaytypeno());
         expense.setBillno(expenseDTO.getBillno());
-        expense.setVendorid(expenseDTO.getVendorid());
+        expense.setVendorid(expenseDTO.getVendor());
         expense.setAmount(expenseDTO.getAmount());
         expense.setTax(expenseDTO.getTax());
         expense.setNettotal(expenseDTO.getNettotal());
@@ -73,14 +116,15 @@ public class ExpenseService {
         expense.setUserid(expenseDTO.getUserid());
         expense.setBrhid(expenseDTO.getBrhid());
         expense.setDate(expenseDTO.getDate());
-        expense.setExpenseacno(expenseDTO.getExpenseacno());
+        expense.setExpenseacno(expenseDTO.getAccount());
 
         repo.save(expense);
 
         Jvtran expenseEntry = new Jvtran();
+
         expenseEntry.setTrno(trno);
-        expenseEntry.setAcno(expenseDTO.getExpenseacno()); // Account Number for Expenses
-        expenseEntry.setAmount(expenseDTO.getAmount());
+        expenseEntry.setAcno(expenseDTO.getAccount()); // Account Number for Expenses
+        expenseEntry.setAmount(expenseDTO.getNettotal());
         expenseEntry.setId(1); // Set an appropriate ID for expense
         expenseEntry.setNote("Entry of Exp #" + expense.getDocno());
         expenseEntry.setUserid(expenseDTO.getUserid());
@@ -92,8 +136,10 @@ public class ExpenseService {
         jvrepo.save(expenseEntry);
 
         Jvtran vendorEntry = new Jvtran();
+
+        int vendorEntryAcno=Integer.parseInt(objcommon.getAccountNumberByPayType(expenseDTO.getPaytype(),expenseDTO.getVendor()));
         vendorEntry.setTrno(trno);
-        vendorEntry.setAcno(expenseDTO.getVendorid()); // Account Number for Vendors
+        vendorEntry.setAcno(vendorEntryAcno); // Account Number for Vendors
         vendorEntry.setAmount(expenseDTO.getAmount()*-1); // Negate the amount
         vendorEntry.setId(-1); // Set an appropriate ID for vendor entry
         vendorEntry.setNote("Vendor entry of Exp #" + expense.getDocno());
@@ -104,6 +150,25 @@ public class ExpenseService {
         vendorEntry.setDtype("EXP");
         vendorEntry.setOutAmount(0.0);
         jvrepo.save(vendorEntry);
+
+        if(expenseDTO.getTax()>0.0){
+            Jvtran taxEntry = new Jvtran();
+            taxEntry.setTrno(trno);
+            taxEntry.setAcno(objcommon.getTaxAcno()); // Account Number for Vendors
+            taxEntry.setAmount(expenseDTO.getTax()*-1); // Negate the amount
+            taxEntry.setId(-1); // Set an appropriate ID for vendor entry
+            taxEntry.setNote("Vendor Tax entry of Exp #" + expense.getDocno());
+            taxEntry.setUserid(expenseDTO.getUserid());
+            taxEntry.setBrhid(expenseDTO.getBrhid());
+            taxEntry.setDate(expenseDTO.getDate());
+            taxEntry.setDocNo(expense.getDocno());
+            taxEntry.setDtype("EXP");
+            taxEntry.setOutAmount(0.0);
+            jvrepo.save(taxEntry);
+        }
+
+
+
 
         return expense;
     }

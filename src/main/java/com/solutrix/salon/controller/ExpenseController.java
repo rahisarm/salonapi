@@ -19,7 +19,7 @@ public class ExpenseController {
     private ExpenseService service;
 
     @GetMapping("/all/{brhid}")
-    public List<Expense> getExpenses(@PathVariable int brhid) {
+    public List<ExpenseDTO> getExpenses(@PathVariable int brhid) {
         return service.getAllExpenses(brhid);
     }
 

@@ -16,7 +16,7 @@ public interface ExpenseRepo extends JpaRepository<Expense,Integer> {
     Optional<Integer> findMaxDocNo();
 
     @Query(value = "SELECT COALESCE(MAX(voc_no), 0) FROM my_expense where brhid=:brhid", nativeQuery = true)
-    Optional<Integer> findMaxVocNo(@Param("brhid") int brhid);
+    Optional<Integer> findMaxVocNo(@Param("brhid") Integer brhid);
 
     List<Expense> findAllByBrhidIs(Integer brhid);
 }

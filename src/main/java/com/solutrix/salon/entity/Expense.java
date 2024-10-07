@@ -20,24 +20,24 @@ import java.sql.Date;
 public class Expense {
     @Id
     @Column(name = "doc_no")
-    private int docno;
-    private int exptype;
-    private int paytype;
+    private Integer docno;
+    private Integer exptype;
+    private Integer paytype;
     private String paytypeno;
     private String billno;
-    private int vendorid;
-    private double amount = 0.0;
+    private Integer vendorid;
+    private Double amount = 0.0;
     @Column(name = "vat")
-    private double tax = 0.0;
+    private Double tax = 0.0;
     @Column(name = "total")
-    private double nettotal = 0.0;
+    private Double nettotal = 0.0;
     private String remarks;
-    private int status;
-    private int userid;
-    private int brhid;
+    private Integer status;
+    private Integer userid;
+    private Integer brhid;
     private Date date;
-    private int trno;
-    private int expenseacno;
+    private Integer trno;
+    private Integer expenseacno;
     @Column(name="voc_no")
-    private int vocno;
+    private Integer vocno;
 }
