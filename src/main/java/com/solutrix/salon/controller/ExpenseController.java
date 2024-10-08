@@ -34,23 +34,23 @@ public class ExpenseController {
 //        return account.map(ResponseEntity::ok).orElseGet(()->ResponseEntity.notFound().build());
 //    }
 //
-//    @DeleteMapping("/{docno}")
-//    public ResponseEntity deleteExpense(@PathVariable int docno) {
-//        try {
-//            service.deleteExpense(docno);
-//            return ResponseEntity.ok(true);
-//        } catch (EntityNotFoundException e) {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
-//
-//    @PutMapping
-//    public ResponseEntity<Expense> updateExpense(@RequestBody Expense updatedExpense) {
-//        try {
-//            Expense updated = service.updateExpense(updatedExpense.getDocno(), updatedExpense);
-//            return ResponseEntity.ok(updated);
-//        } catch (EntityNotFoundException e) {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
+    @DeleteMapping("/{docno}")
+    public ResponseEntity deleteExpense(@PathVariable int docno) {
+        try {
+            service.deleteExpense(docno);
+            return ResponseEntity.ok(true);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping
+    public ResponseEntity<Expense> updateExpense(@RequestBody ExpenseDTO expenseDTO) {
+        try {
+            Expense updated = service.updateExpense(expenseDTO);
+            return ResponseEntity.ok(updated);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

@@ -24,7 +24,7 @@ public class ComboMasterController {
 //        return service.getComboList(brhid);
 //    }
     @GetMapping("/all/{brhid}")
-    public List<ComboMaster> getComboMaster(@PathVariable int brhid) {
+    public List<ComboMasterDTO> getComboMaster(@PathVariable int brhid) {
         return service.getAllComboMasters(brhid);
     }
 

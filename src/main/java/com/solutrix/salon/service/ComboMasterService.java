@@ -4,9 +4,11 @@ import com.solutrix.salon.dto.ComboDetailDTO;
 import com.solutrix.salon.dto.ComboMasterDTO;
 import com.solutrix.salon.entity.ComboDetail;
 import com.solutrix.salon.entity.ComboMaster;
+import com.solutrix.salon.entity.Product;
 import com.solutrix.salon.exception.ResourceNotFoundException;
 import com.solutrix.salon.repository.ComboDetailRepo;
 import com.solutrix.salon.repository.ComboMasterRepo;
+import com.solutrix.salon.repository.ProductRepo;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,30 +30,51 @@ public class ComboMasterService {
     @Autowired
     private ComboDetailRepo detailRepo;
 
-
+    @Autowired
+    private ProductRepo productRepo;
 
     @PersistenceContext
     private EntityManager entityManager;
     @Autowired
     private ComboMasterRepo comboMasterRepo;
 
-//    public List<ComboMasterDTO> getComboList(int brhid){
-//        List<ComboMaster> masterlist=masterRepo.findAllByBrhidIsAndAndStatusNot(brhid,7);
-//        ComboMasterDTO dto=new ComboMasterDTO();
-//        return masterlist.stream().map(combo->{
-//            List<ComboDetailDTO> services=detailRepo.findAllByComboMasterIs(combo.getDocno());
-//            dto.setComboDetailList(services);
-//            dto.setDocno(combo.getDocno());
-//            dto.setDescription(combo.getDescription());
-//            dto.setDocno(combo.getDocno());
-//            dto.setAmount(combo.getAmount());
-//            dto.setDate(combo.getDate());
-//            dto.setRefname(combo.getRefname());
-//            return dto;
-//        }).collect(Collectors.toList());
-//    }
-    public List<ComboMaster> getAllComboMasters(int brhid) {
-        return masterRepo.findAllByBrhidIsAndAndStatusNot(brhid,7);
+    // Fetch and map to ComboMasterDTO
+    public List<ComboMasterDTO> getAllComboMasters(int brhid) {
+        List<ComboMaster> comboMasters = comboMasterRepo.findAllByBrhidIsAndAndStatusNot(brhid,7);
+        return comboMasters.stream().map(this::mapToComboMasterDTO).collect(Collectors.toList());
+    }
+
+    // Helper method to map ComboMaster to ComboMasterDTO
+    private ComboMasterDTO mapToComboMasterDTO(ComboMaster comboMaster) {
+        List<ComboDetailDTO> comboDetailDTOList = comboMaster.getComboDetailList().stream()
+                .map(this::mapToComboDetailDTO)
+                .collect(Collectors.toList());
+
+        return new ComboMasterDTO(
+                comboMaster.getDocno(),
+                comboMaster.getRefname(),
+                comboMaster.getFromdate(),
+                comboMaster.getTodate(),
+                comboMaster.getAmount(),
+                comboMaster.getDescription(),
+                comboMaster.getStatus(),
+                comboMaster.getUserid(),
+                comboMaster.getBrhid(),
+                comboMaster.getDate(),
+                comboMaster.getVocno(),
+                comboDetailDTOList
+        );
+    }
+
+    // Helper method to map ComboDetail to ComboDetailDTO and include product info
+    private ComboDetailDTO mapToComboDetailDTO(ComboDetail comboDetail) {
+        Optional<Product> product=productRepo.findById(comboDetail.getPsrno());
+        return new ComboDetailDTO(
+                comboDetail.getComboMaster().getDocno(),
+                product.get().getDocno(),
+                product.get().getRefname(),    // product name
+                product.get().getAmount()      // product amount
+        );
     }
 
 
