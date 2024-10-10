@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ComboDetailDTO {
-
+    private int docno;
     private int rdocno;
     private int psrno;
     private String refname;

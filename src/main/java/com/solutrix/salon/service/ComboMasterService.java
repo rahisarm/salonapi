@@ -70,6 +70,7 @@ public class ComboMasterService {
     private ComboDetailDTO mapToComboDetailDTO(ComboDetail comboDetail) {
         Optional<Product> product=productRepo.findById(comboDetail.getPsrno());
         return new ComboDetailDTO(
+                comboDetail.getDocno(),
                 comboDetail.getComboMaster().getDocno(),
                 product.get().getDocno(),
                 product.get().getRefname(),    // product name
@@ -110,14 +111,20 @@ public class ComboMasterService {
     }
 
     @Transactional
-    public ComboMaster updateComboMaster(int id, ComboMaster comboMaster) {
-        ComboMaster comboMasteritem=masterRepo.findById(id).orElseThrow(()-> new ResourceNotFoundException("ComboMaster Not Found"));
-        comboMasteritem.setDescription(comboMaster.getDescription());
-        comboMasteritem.setAmount(comboMaster.getAmount());
-        comboMasteritem.setRefname(comboMaster.getRefname());
-        comboMasteritem.setFromdate(comboMaster.getFromdate());
-        comboMasteritem.setTodate(comboMaster.getTodate());
-        comboMasteritem.setComboDetailList(comboMaster.getComboDetailList());
+    public ComboMaster updateComboMaster(ComboMasterDTO comboMasterDTO) {
+        ComboMaster comboMasteritem=masterRepo.findById(comboMasterDTO.getDocno()).orElseThrow(()-> new ResourceNotFoundException("ComboMaster Not Found"));
+        comboMasteritem.setAmount(comboMasterDTO.getAmount());
+        comboMasteritem.setDescription(comboMasterDTO.getDescription());
+        comboMasteritem.setRefname(comboMasterDTO.getRefname());
+
+        List<ComboDetail> details = comboMasterDTO.getComboDetailList().stream()
+                .map(detailDTO -> {
+                    ComboDetail detail = new ComboDetail();
+                    detail.setPsrno(detailDTO.getPsrno());
+                    detail.setComboMaster(comboMasteritem);
+                    return detail;
+                }).collect(Collectors.toList());
+        comboMasteritem.setComboDetailList(details);
         return masterRepo.save(comboMasteritem);
     }
 

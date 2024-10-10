@@ -52,9 +52,9 @@ public class ComboMasterController {
     }
 
     @PutMapping
-    public ResponseEntity<ComboMaster> updateComboMaster(@RequestBody ComboMaster updatedComboMaster) {
+    public ResponseEntity<ComboMaster> updateComboMaster(@RequestBody ComboMasterDTO comboDTO) {
         try {
-            ComboMaster updated = service.updateComboMaster(updatedComboMaster.getDocno(), updatedComboMaster);
+            ComboMaster updated = service.updateComboMaster(comboDTO);
             return ResponseEntity.ok(updated);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
