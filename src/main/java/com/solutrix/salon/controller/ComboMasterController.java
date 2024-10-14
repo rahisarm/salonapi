@@ -36,8 +36,8 @@ public class ComboMasterController {
     }
 
     @GetMapping("/{docno}")
-    public ResponseEntity<ComboMaster> getComboMasterById(@PathVariable int docno) {
-        Optional<ComboMaster> comboMaster = service.getComboMasterById(docno);
+    public ResponseEntity<ComboMasterDTO> getComboMasterById(@PathVariable int docno) {
+        Optional<ComboMasterDTO> comboMaster = service.getComboMasterById(docno);
         return comboMaster.map(ResponseEntity::ok).orElseGet(()->ResponseEntity.notFound().build());
     }
 

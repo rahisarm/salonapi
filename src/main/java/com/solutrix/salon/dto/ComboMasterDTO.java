@@ -22,6 +22,7 @@ public class ComboMasterDTO {
     private int brhid;
     private Date date;
     private int vocno;
+    private String servicetype="Combo";
     
 
     private List<ComboDetailDTO> comboDetailList;

@@ -1,5 +1,7 @@
 package com.solutrix.salon.controller;
 
+import com.solutrix.salon.dto.ProductDTO;
+import com.solutrix.salon.dto.ServiceComboDTO;
 import com.solutrix.salon.entity.Product;
 import com.solutrix.salon.service.ProductService;
 import jakarta.persistence.EntityNotFoundException;
@@ -17,8 +19,12 @@ public class ProductController {
     @Autowired
     private ProductService service;
 
+    @GetMapping("/servicecombo/{brhid}")
+    public List<ServiceComboDTO> getAllServiceCombo(@PathVariable Integer brhid) {
+        return service.getAllServiceCombo(brhid);
+    }
     @GetMapping("/all/{brhid}")
-    public List<Product> getAllProducts(@PathVariable int brhid) {
+    public List<ProductDTO> getAllProducts(@PathVariable int brhid) {
         return service.getAllProducts(brhid);
     }
 
@@ -28,8 +34,8 @@ public class ProductController {
     }
 
     @GetMapping("/{docno}")
-    public ResponseEntity<Product> getProductById(@PathVariable int docno) {
-        Optional<Product> product = service.getProductById(docno);
+    public ResponseEntity<ProductDTO> getProductById(@PathVariable int docno) {
+        Optional<ProductDTO> product = service.getProductById(docno);
         return product.map(ResponseEntity::ok).orElseGet(()->ResponseEntity.notFound().build());
     }
 

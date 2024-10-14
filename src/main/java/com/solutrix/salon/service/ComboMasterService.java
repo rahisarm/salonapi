@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -62,6 +63,7 @@ public class ComboMasterService {
                 comboMaster.getBrhid(),
                 comboMaster.getDate(),
                 comboMaster.getVocno(),
+                "Combo",
                 comboDetailDTOList
         );
     }
@@ -79,8 +81,28 @@ public class ComboMasterService {
     }
 
 
-    public Optional<ComboMaster> getComboMasterById(int docno) {
-        return masterRepo.findById(docno);
+    public Optional<ComboMasterDTO> getComboMasterById(int docno) {
+        ComboMasterDTO masterDTO=new ComboMasterDTO();
+        Optional<ComboMaster> comboMaster=comboMasterRepo.findById(docno);
+        if(comboMaster.isPresent()) {
+            masterDTO.setDocno(comboMaster.get().getDocno());
+            masterDTO.setBrhid(comboMaster.get().getBrhid());
+            masterDTO.setStatus(comboMaster.get().getStatus());
+            masterDTO.setUserid(comboMaster.get().getUserid());
+            masterDTO.setFromdate(comboMaster.get().getFromdate());
+            masterDTO.setTodate(comboMaster.get().getTodate());
+            masterDTO.setAmount(comboMaster.get().getAmount());
+            masterDTO.setDescription(comboMaster.get().getDescription());
+            masterDTO.setRefname(comboMaster.get().getRefname());
+            List<ComboDetailDTO> comboDetailDTOList = comboMaster.get().getComboDetailList().stream()
+                    .map(this::mapToComboDetailDTO)
+                    .collect(Collectors.toList());
+            masterDTO.setComboDetailList(comboDetailDTOList);
+            return Optional.of(masterDTO);
+        }
+        else{
+            return Optional.empty();
+        }
     }
 
     @Transactional
