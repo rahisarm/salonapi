@@ -20,9 +20,9 @@ import java.util.List;
 public class InvoiceMaster {
     @Id
     @Column(name = "doc_no")
-    private int docno;
+    private Integer docno;
     private String code;
-    private String cldocno;
+    private Integer cldocno;
     private Double amount;
     private Double discount;
     private Double subtotal;
@@ -35,13 +35,17 @@ public class InvoiceMaster {
     private Integer trno;
     private String remarks;
     private Double out_amount;
+    private Integer paytype;
+    private Integer empid;
+    private Integer chkworkbonus;
+    private Integer chknightbonus;
 
-    private int status;
-    private int userid;
-    private int brhid;
+    private Integer status;
+    private Integer userid;
+    private Integer brhid;
     private Date date;
     @Column(name="voc_no")
-    private int vocno;
+    private Integer vocno;
 
 
     @OneToMany(mappedBy = "invoiceMaster", cascade = CascadeType.ALL)

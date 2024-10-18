@@ -9,6 +9,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
@@ -22,6 +23,7 @@ public class TrnoService {
     @Autowired
     private TrnoRepo repo;
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public int getNewTrno(String dtype){
         Trno trno = new Trno();
         trno.setTrtype(dtype);

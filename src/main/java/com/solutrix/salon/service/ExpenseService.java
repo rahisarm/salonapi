@@ -45,6 +45,10 @@ public class ExpenseService {
     @Autowired
     private Common objcommon;
 
+
+    @Autowired
+    private AuditService auditService;
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -166,6 +170,14 @@ public class ExpenseService {
             taxEntry.setOutAmount(0.0);
             jvrepo.save(taxEntry);
         }
+
+        Audit audit = new Audit();
+        audit.setDtype("EXP");
+        audit.setUserid(expense.getUserid());
+        audit.setBrhid(expense.getBrhid());
+        audit.setDocno(expense.getDocno());
+        audit.setMode("A");
+        auditService.createAudit(audit);
 
         return expense;
     }

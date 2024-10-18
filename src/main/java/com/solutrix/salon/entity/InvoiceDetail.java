@@ -1,5 +1,6 @@
 package com.solutrix.salon.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,8 +21,10 @@ public class InvoiceDetail {
     private Integer rowno;
     @ManyToOne()
     @JoinColumn(name = "rdocno")
+    @JsonBackReference
     private InvoiceMaster invoiceMaster;
     private Integer serviceid;
+    private String servicetype;
     private Double amount;
     private Integer trno;
 }

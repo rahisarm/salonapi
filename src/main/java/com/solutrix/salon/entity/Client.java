@@ -20,14 +20,15 @@ import java.sql.Date;
 public class Client {
     @Id
     @Column(name = "cldocno")
-    private int docno;
+    private Integer docno;
     private String refname;
     private String email;
     private String mobile;
-    private int status;
-    private int userid;
-    private int brhid;
+    private Integer status;
+    private Integer userid;
+    private Integer brhid;
     private Date date;
     @Column(name="voc_no")
-    private int vocno;
+    private Integer vocno;
+    private Integer acno;
 }
