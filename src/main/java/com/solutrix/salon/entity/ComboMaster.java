@@ -32,7 +32,7 @@ public class ComboMaster {
     @Column(name="voc_no")
     private int vocno;
 
-    @OneToMany(mappedBy = "comboMaster", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "comboMaster", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<ComboDetail> comboDetailList;
 }

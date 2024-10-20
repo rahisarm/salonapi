@@ -206,15 +206,11 @@ public class InvoiceService {
                 detailDTO.setServicetype(detail.getServicetype());
                 if(detail.getServicetype().trim().equalsIgnoreCase("Service")){
                     Optional<Product> product=productRepo.findById(detail.getServiceid());
-                    if(product.isPresent()){
-                        detailDTO.setServicename(product.get().getRefname());
-                    }
+                    product.ifPresent(value -> detailDTO.setServicename(value.getRefname()));
                 }
                 else if(detail.getServicetype().trim().equalsIgnoreCase("Combo")){
                     Optional<ComboMaster> combo=comboMasterRepo.findById(detail.getServiceid());
-                    if(combo.isPresent()){
-                        detailDTO.setServicename(combo.get().getRefname());
-                    }
+                    combo.ifPresent(value -> detailDTO.setServicename(value.getRefname()));
                 }
                 invoiceDetailDTOList.add(detailDTO);
 
@@ -223,6 +219,7 @@ public class InvoiceService {
             dto.setDetails(invoiceDetailDTOList);
             invoiceMasterDTOList.add(dto);
         });
+        System.out.println(invoiceMasterDTOList);
         return invoiceMasterDTOList;
     }
 

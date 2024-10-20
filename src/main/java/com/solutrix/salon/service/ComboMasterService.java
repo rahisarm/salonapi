@@ -139,6 +139,14 @@ public class ComboMasterService {
         comboMasteritem.setDescription(comboMasterDTO.getDescription());
         comboMasteritem.setRefname(comboMasterDTO.getRefname());
 
+        List<ComboDetail> existingdetails=comboMasteritem.getComboDetailList();
+        if(existingdetails.size()>0) {
+            for(ComboDetail detail:existingdetails) {
+                detail.setComboMaster(null);
+                detailRepo.delete(detail);
+            }
+        }
+
         List<ComboDetail> details = comboMasterDTO.getComboDetailList().stream()
                 .map(detailDTO -> {
                     ComboDetail detail = new ComboDetail();
