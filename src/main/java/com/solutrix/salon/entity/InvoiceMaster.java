@@ -51,4 +51,6 @@ public class InvoiceMaster {
     @OneToMany(mappedBy = "invoiceMaster", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<InvoiceDetail> details=new ArrayList<>();
+
+
 }

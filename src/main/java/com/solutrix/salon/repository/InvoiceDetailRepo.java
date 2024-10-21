@@ -11,4 +11,5 @@ import java.util.Optional;
 
 public interface InvoiceDetailRepo extends JpaRepository<InvoiceDetail,Integer> {
 
+    void deleteAllByInvoiceMaster(InvoiceMaster invoiceMaster);
 }

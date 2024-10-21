@@ -1,6 +1,7 @@
 package com.solutrix.salon.controller;
 
 import com.solutrix.salon.dto.InvoiceMasterDTO;
+import com.solutrix.salon.entity.Expense;
 import com.solutrix.salon.entity.InvoiceMaster;
 import com.solutrix.salon.service.InvoiceService;
 import jakarta.persistence.EntityNotFoundException;
@@ -28,6 +29,16 @@ public class InvoiceController {
         return invoiceService.getAllInvoices();
     }
 
+    @PutMapping
+    public ResponseEntity<InvoiceMaster> updateInvoice(@RequestBody InvoiceMasterDTO invoice) {
+        try {
+            System.out.println(invoice);
+            InvoiceMaster updated = invoiceService.updateInvoice(invoice);
+            return ResponseEntity.ok(updated);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
     @DeleteMapping("/{docno}")
     public ResponseEntity deleteInvoice(@PathVariable int docno) {
         try {
