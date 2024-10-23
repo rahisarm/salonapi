@@ -40,9 +40,9 @@ public class InvoiceController {
         }
     }
     @DeleteMapping("/{docno}")
-    public ResponseEntity deleteInvoice(@PathVariable int docno) {
+    public ResponseEntity deleteInvoice(@PathVariable int docno,@RequestParam String userid,@RequestParam String brhid) {
         try {
-            invoiceService.deleteInvoice(docno);
+            invoiceService.deleteInvoice(docno,userid,brhid);
             return ResponseEntity.ok(true);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();

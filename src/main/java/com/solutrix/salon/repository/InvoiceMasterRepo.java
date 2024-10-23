@@ -18,4 +18,11 @@ public interface InvoiceMasterRepo extends JpaRepository<InvoiceMaster,Integer> 
     @Query(value = "SELECT COALESCE(MAX(voc_no), 0) FROM my_invm where brhid=:brhid", nativeQuery = true)
     Optional<Integer> findMaxVocNo(@Param("brhid") int brhid);
 
+    @Query("select sum(i.subtotal) from InvoiceMaster i where i.date>=:fromdate and i.date<=:todate and i.brhid=:brhid")
+    Double findSumSubtotal(@Param("fromdate") java.sql.Date fromdate,@Param("todate") java.sql.Date todate,@Param("brhid") int brhid);
+
+    @Query("select sum(i.subtotal) from InvoiceMaster i where i.date>=:fromdate and i.date<=:todate")
+    Double findSumSubtotalAllBranch(@Param("fromdate") java.sql.Date fromdate,@Param("todate") java.sql.Date todate);
+
+
 }

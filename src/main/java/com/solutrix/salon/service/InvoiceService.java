@@ -81,7 +81,7 @@ public class InvoiceService {
         invoiceMaster.setEmpid(invoiceMasterDTO.getEmpid());
         invoiceMaster.setChknightbonus(invoiceMasterDTO.getChknightbonus() ?1:0);
         invoiceMaster.setChkworkbonus(invoiceMasterDTO.getChkworkbonus() ?1:0);
-
+        invoiceMaster.setSubtotal(invoiceMaster.getAmount()-invoiceMaster.getDiscount());
         Optional<Employee> objemployee=employeeRepo.findById(invoiceMaster.getEmpid());
 
         if(invoiceMaster.getChkworkbonus()>0){
@@ -238,10 +238,23 @@ public class InvoiceService {
         return invoiceMasterRepo.findById(id);
     }
 
-    public void deleteInvoice(Integer id) {
+    @Transactional
+    public void deleteInvoice(Integer id,String userid,String brhid) {
+        System.out.println("Deleting Invoice"+id+"::"+userid+"::"+brhid);
         Optional<InvoiceMaster> invoiceMaster=invoiceMasterRepo.findById(id);
-        jvrepo.deleteByTrno(invoiceMaster.get().getTrno());
-        invoiceMasterRepo.deleteById(id);
+        if(invoiceMaster.isPresent()){
+            Audit audit = new Audit();
+            audit.setDtype("INV");
+            audit.setUserid(Integer.parseInt(userid));
+            audit.setBrhid(Integer.parseInt(brhid));
+            audit.setDocno(invoiceMaster.get().getDocno());
+            audit.setMode("D");
+            auditService.createAudit(audit);
+
+            jvrepo.deleteByTrno(invoiceMaster.get().getTrno());
+            invoiceDetailRepo.deleteAllByInvoiceMaster(invoiceMaster.get());
+            invoiceMasterRepo.deleteById(id);
+        }
     }
 
     @Transactional
@@ -262,7 +275,7 @@ public class InvoiceService {
             invoiceMaster.setEmpid(invoiceMasterDTO.getEmpid());
             invoiceMaster.setChknightbonus(invoiceMasterDTO.getChknightbonus() ? 1 : 0);
             invoiceMaster.setChkworkbonus(invoiceMasterDTO.getChkworkbonus() ? 1 : 0);
-
+            invoiceMaster.setSubtotal(invoiceMaster.getAmount()-invoiceMaster.getDiscount());
             Optional<Employee> objemployee = employeeRepo.findById(invoiceMaster.getEmpid());
             List<Config> configList = configRepo.findAll();
 
@@ -280,7 +293,7 @@ public class InvoiceService {
             }
 
             invoiceDetailRepo.deleteAllByInvoiceMaster(invoiceMaster);
-            List<InvoiceDetailDTO> detailsDTOList = Optional.ofNullable(invoiceMasterDTO.getDetails()).orElse(new ArrayList<>());
+            List<InvoiceDetailDTO> detailsDTOList = Optional.ofNullable(invoiceMasterDTO.getDetails()).map(ArrayList::new).orElse(new ArrayList<>());
             List<InvoiceDetail> details = detailsDTOList.stream()
                     .map(detailDTO -> {
                         InvoiceDetail detail = new InvoiceDetail();
@@ -290,7 +303,7 @@ public class InvoiceService {
                         detail.setServiceid(detailDTO.getServiceid());
                         detail.setAmount(detailDTO.getAmount());
                         return detail;
-                    }).toList();
+                    }).collect(Collectors.toList());
             invoiceMaster.setDetails(details);
 
             System.out.println(invoiceMaster.toString());

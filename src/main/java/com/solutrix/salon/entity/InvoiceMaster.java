@@ -52,5 +52,4 @@ public class InvoiceMaster {
     @JsonManagedReference
     private List<InvoiceDetail> details=new ArrayList<>();
 
-
 }
