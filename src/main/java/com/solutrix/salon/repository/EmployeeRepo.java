@@ -21,4 +21,11 @@ public interface EmployeeRepo extends JpaRepository<Employee,Integer> {
     Optional<Employee> findByRefname(String refname);
 
     List<Employee> findAllByBrhidIsAndAndStatusNot(Integer brhid, Integer status);
+
+    @Query("select count(*) from Employee where active=true and brhid=:brhid")
+    int countActiveByBrhid(@Param("brhid") int brhid);
+
+    @Query("select count(*) from Employee where active=true")
+    int countActive();
+
 }

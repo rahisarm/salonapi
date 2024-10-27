@@ -42,43 +42,42 @@ public class ComboMasterService {
     // Fetch and map to ComboMasterDTO
     public List<ComboMasterDTO> getAllComboMasters(int brhid) {
         List<ComboMaster> comboMasters = comboMasterRepo.findAllByBrhidIsAndAndStatusNot(brhid,7);
-        return comboMasters.stream().map(this::mapToComboMasterDTO).collect(Collectors.toList());
+        List<ComboMasterDTO> masterDTOList = new ArrayList<>();
+        comboMasters.forEach(comboMaster -> {
+            ComboMasterDTO comboMasterDTO = new ComboMasterDTO();
+            comboMasterDTO.setAmount(comboMaster.getAmount());
+            comboMasterDTO.setDescription(comboMaster.getDescription());
+            comboMasterDTO.setDate(comboMaster.getDate());
+            comboMasterDTO.setFromdate(comboMaster.getFromdate());
+            comboMasterDTO.setTodate(comboMaster.getTodate());
+            comboMasterDTO.setBrhid(comboMaster.getBrhid());
+            comboMasterDTO.setRefname(comboMaster.getRefname());
+            comboMasterDTO.setStatus(comboMaster.getStatus());
+            comboMasterDTO.setDocno(comboMaster.getDocno());
+            comboMasterDTO.setServicetype("Combo");
+            comboMasterDTO.setUserid(comboMaster.getUserid());
+            comboMasterDTO.setVocno(comboMaster.getVocno());
+
+            List<ComboDetailDTO> detailDTOList = new ArrayList<>();
+            comboMaster.getComboDetailList().forEach(detailDTO -> {
+                ComboDetailDTO comboDetailDTO = new ComboDetailDTO();
+                Optional<Product> product=productRepo.findById(detailDTO.getPsrno());
+                if(product.isPresent()) {
+                    comboDetailDTO.setAmount(product.get().getAmount());
+                    comboDetailDTO.setRefname(product.get().getRefname());
+                }
+                comboDetailDTO.setPsrno(detailDTO.getPsrno());
+                comboDetailDTO.setRdocno(comboMaster.getDocno());
+                comboDetailDTO.setDocno(detailDTO.getDocno());
+                detailDTOList.add(comboDetailDTO);
+            });
+            comboMasterDTO.setComboDetailList(detailDTOList);
+            masterDTOList.add(comboMasterDTO);
+        });
+        return masterDTOList;
+        //return comboMasters.stream().map(this::mapToComboMasterDTO).collect(Collectors.toList());
     }
 
-    // Helper method to map ComboMaster to ComboMasterDTO
-    private ComboMasterDTO mapToComboMasterDTO(ComboMaster comboMaster) {
-        List<ComboDetailDTO> comboDetailDTOList = comboMaster.getComboDetailList().stream()
-                .map(this::mapToComboDetailDTO)
-                .collect(Collectors.toList());
-
-        return new ComboMasterDTO(
-                comboMaster.getDocno(),
-                comboMaster.getRefname(),
-                comboMaster.getFromdate(),
-                comboMaster.getTodate(),
-                comboMaster.getAmount(),
-                comboMaster.getDescription(),
-                comboMaster.getStatus(),
-                comboMaster.getUserid(),
-                comboMaster.getBrhid(),
-                comboMaster.getDate(),
-                comboMaster.getVocno(),
-                "Combo",
-                comboDetailDTOList
-        );
-    }
-
-    // Helper method to map ComboDetail to ComboDetailDTO and include product info
-    private ComboDetailDTO mapToComboDetailDTO(ComboDetail comboDetail) {
-        Optional<Product> product=productRepo.findById(comboDetail.getPsrno());
-        return new ComboDetailDTO(
-                comboDetail.getDocno(),
-                comboDetail.getComboMaster().getDocno(),
-                product.get().getDocno(),
-                product.get().getRefname(),    // product name
-                product.get().getAmount()      // product amount
-        );
-    }
 
 
     public Optional<ComboMasterDTO> getComboMasterById(int docno) {
@@ -94,10 +93,20 @@ public class ComboMasterService {
             masterDTO.setAmount(comboMaster.get().getAmount());
             masterDTO.setDescription(comboMaster.get().getDescription());
             masterDTO.setRefname(comboMaster.get().getRefname());
-            List<ComboDetailDTO> comboDetailDTOList = comboMaster.get().getComboDetailList().stream()
-                    .map(this::mapToComboDetailDTO)
-                    .collect(Collectors.toList());
-            masterDTO.setComboDetailList(comboDetailDTOList);
+            List<ComboDetailDTO> detailDTOList = new ArrayList<>();
+            comboMaster.get().getComboDetailList().forEach(detailDTO -> {
+                ComboDetailDTO comboDetailDTO = new ComboDetailDTO();
+                Optional<Product> product=productRepo.findById(detailDTO.getPsrno());
+                if(product.isPresent()) {
+                    comboDetailDTO.setAmount(product.get().getAmount());
+                    comboDetailDTO.setRefname(product.get().getRefname());
+                }
+                comboDetailDTO.setPsrno(detailDTO.getPsrno());
+                comboDetailDTO.setRdocno(comboMaster.get().getDocno());
+                comboDetailDTO.setDocno(detailDTO.getDocno());
+                detailDTOList.add(comboDetailDTO);
+            });
+            masterDTO.setComboDetailList(detailDTOList);
             return Optional.of(masterDTO);
         }
         else{
@@ -116,6 +125,7 @@ public class ComboMasterService {
         comboMaster.setDate(Date.valueOf(LocalDate.now()));
         comboMaster.setVocno(maxVocNo.orElse(0) + 1);
         comboMaster.setBrhid(dto.getBrhid());
+        comboMaster.setUserid(dto.getUserid());
         comboMaster.setAmount(dto.getAmount());
         comboMaster.setDescription(dto.getDescription());
         comboMaster.setRefname(dto.getRefname());
@@ -139,13 +149,7 @@ public class ComboMasterService {
         comboMasteritem.setDescription(comboMasterDTO.getDescription());
         comboMasteritem.setRefname(comboMasterDTO.getRefname());
 
-        List<ComboDetail> existingdetails=comboMasteritem.getComboDetailList();
-        if(existingdetails.size()>0) {
-            for(ComboDetail detail:existingdetails) {
-                detail.setComboMaster(null);
-                detailRepo.delete(detail);
-            }
-        }
+        detailRepo.deleteAllByComboMaster(comboMasteritem);
 
         List<ComboDetail> details = comboMasterDTO.getComboDetailList().stream()
                 .map(detailDTO -> {
@@ -162,6 +166,8 @@ public class ComboMasterService {
     public void deleteComboMaster(int id) {
         /*User useritem=repo.findById(id).orElseThrow(()-> new ResourceNotFoundException("User Not Found"));
         useritem.setStatus(7);*/
+        Optional<ComboMaster> comboMaster=comboMasterRepo.findById(id);
+        detailRepo.deleteAllByComboMaster(comboMaster.get());
         comboMasterRepo.deleteById(id);
     }
 

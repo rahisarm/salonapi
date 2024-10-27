@@ -25,12 +25,14 @@ public class ComboMasterController {
 //    }
     @GetMapping("/all/{brhid}")
     public List<ComboMasterDTO> getComboMaster(@PathVariable int brhid) {
+        System.out.println("All Combos Controller");
+        System.out.println(service.getAllComboMasters(brhid));
         return service.getAllComboMasters(brhid);
     }
 
     @PostMapping
     public ResponseEntity<ComboMaster> createCombo(@RequestBody ComboMasterDTO comboDTO) {
-        System.out.println(comboDTO);
+
         ComboMaster comboMaster = service.createComboMaster(comboDTO);
         return new ResponseEntity<>(comboMaster, HttpStatus.CREATED);
     }
@@ -54,6 +56,8 @@ public class ComboMasterController {
     @PutMapping
     public ResponseEntity<ComboMaster> updateComboMaster(@RequestBody ComboMasterDTO comboDTO) {
         try {
+            System.out.println("In Update Controller");
+            System.out.println(comboDTO);
             ComboMaster updated = service.updateComboMaster(comboDTO);
             return ResponseEntity.ok(updated);
         } catch (EntityNotFoundException e) {

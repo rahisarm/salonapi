@@ -73,7 +73,7 @@ public class EmployeeService {
         employeeitem.setRefname(employee.getRefname());
         employeeitem.setActive(employee.isActive());
         employeeitem.setTargetamt(employee.getTargetamt());
-
+        employeeitem.setSalary(employee.getSalary());
         Account account=accountRepo.findById(employeeitem.getAcno()).orElseThrow(()-> new ResourceNotFoundException("Account Not Found"));
 
         account.setCode("HR-" + employeeitem.getDocno());

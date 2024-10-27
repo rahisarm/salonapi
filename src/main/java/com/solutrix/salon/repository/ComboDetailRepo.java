@@ -16,4 +16,5 @@ public interface ComboDetailRepo extends JpaRepository<ComboDetail,Integer> {
     @Query(value = "SELECT COALESCE(MAX(doc_no), 0) FROM my_combodet", nativeQuery = true)
     Optional<Integer> findMaxDocNo();
 
+    void deleteAllByComboMaster(ComboMaster comboMaster);
 }

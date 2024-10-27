@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/dashboard")
 public class DashboardController {
@@ -13,9 +16,15 @@ public class DashboardController {
     @Autowired
     private DashboardService dashboardService;
 
-    @GetMapping
-    public ResponseEntity<DashboardDTO> getDashboardData(@RequestBody DashboardDTO dto) {
-        DashboardDTO dashboardData = dashboardService.getDashboardData(dto);
+    @PostMapping
+    public ResponseEntity<DashboardDTO> getDashboardData(@RequestBody DashboardDTO dashboardDTO) {
+
+        DashboardDTO dashboardData = dashboardService.getDashboardData(dashboardDTO);
+        return ResponseEntity.ok(dashboardData);
+    }
+    @PostMapping("/DailyCounter")
+    public ResponseEntity<DashboardDTO> getDailyCounter(@RequestBody DashboardDTO dashboardDTO) {
+        DashboardDTO dashboardData = dashboardService.getDailyCounterData(dashboardDTO);
         return ResponseEntity.ok(dashboardData);
     }
 }

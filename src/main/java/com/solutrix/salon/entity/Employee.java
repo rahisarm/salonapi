@@ -20,17 +20,18 @@ import java.sql.Date;
 public class Employee {
     @Id
     @Column(name = "doc_no")
-    private int docno;
+    private Integer docno;
     private String refname;
     private String email;
     private String mobile;
-    private int status;
-    private int userid;
-    private int brhid;
-    private int acno;
-    private double targetamt;
+    private Integer status;
+    private Integer userid;
+    private Integer brhid;
+    private Integer acno;
+    private Double targetamt;
     private boolean active;
     private Date date;
     @Column(name="voc_no")
-    private int vocno;
+    private Integer vocno;
+    private Double salary;
 }
