@@ -101,6 +101,22 @@ public class InvoiceService {
             });
         }
 
+        if(invoiceMaster.getChknightbonus()>0){
+            configList.forEach(config->{
+                if(config.getFieldname().trim().equalsIgnoreCase("NightBonusPercent")){
+                    if(config.getMethod()>0 && Double.parseDouble(config.getConfigvalue())>0){
+                        double nightpercent=Double.parseDouble(config.getConfigvalue());
+                        double nightamt=(invoiceMaster.getAmount())*(nightpercent/100);
+                        BigDecimal bd=new BigDecimal(nightamt);
+                        bd=bd.setScale(2,BigDecimal.ROUND_HALF_UP);
+                        nightamt=bd.doubleValue();
+                        invoiceMaster.setNightbonus(nightamt);
+                        return;
+                    }
+                }
+            });
+        }
+
         List<InvoiceDetail> details = invoiceMasterDTO.getDetails().stream()
                 .map(detailDTO -> {
                     InvoiceDetail detail = new InvoiceDetail();

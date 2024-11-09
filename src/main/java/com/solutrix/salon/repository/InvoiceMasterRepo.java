@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface InvoiceMasterRepo extends JpaRepository<InvoiceMaster,Integer> {
@@ -37,7 +38,13 @@ public interface InvoiceMasterRepo extends JpaRepository<InvoiceMaster,Integer> 
     @Query("select round (coalesce(sum(taxtotal),0) ,2) from InvoiceMaster where month(date)=:month and year(date)=:year and brhid=:brhid")
     Double findSumTaxTotal(@Param("month") int month,@Param("year") int year,@Param("brhid") int brhid);
 
-    @Query("select round (coalesce(sum(case when m.paytype=1 then m.taxtotal else 0.0 end),0),2) as dailyinvcash,round (coalesce(sum(case when m.paytype=6 then m.taxtotal else 0.0 end),0),2) as dailyinvcredit,round (coalesce(sum(case when m.paytype not in (1,6) then m.taxtotal else 0.0 end),0),2) as dailyinvcard from InvoiceMaster m where m.date=:dailydate")
-    DashboardDTO findDailyInvCounter(@Param("dailydate") java.sql.Date dailydate);
+    /*@Query("select round (coalesce(sum(case when m.paytype=1 then m.taxtotal else 0.0 end),0),2) as dailyinvcash,round (coalesce(sum(case when m.paytype=6 then m.taxtotal else 0.0 end),0),2) as dailyinvcredit,round (coalesce(sum(case when m.paytype not in (1,6) then m.taxtotal else 0.0 end),0),2) as dailyinvcard from InvoiceMaster m where m.date=:dailydate")
+    DashboardDTO findDailyInvCounter(@Param("dailydate") java.sql.Date dailydate);*/
+
+    List<InvoiceMaster> findAllByDate(@Param("dailydate") java.sql.Date dailydate);
+    @Query(value = "SELECT base.*,ROUND(COALESCE(base.salary,0)+COALESCE(base.nightbonus,0)+COALESCE(base.workbonus,0),2) totalsalary FROM (\n" +
+            " SELECT emp.doc_no empdocno,emp.refname empname,emp.salary,ROUND(SUM(COALESCE(nightbonus,0)),2) nightbonus,ROUND(SUM(COALESCE(workbonus,0)),2) workbonus FROM my_invm inv LEFT JOIN my_empm emp ON inv.empid=emp.doc_no \n" +
+            " WHERE MONTH(inv.date)=MONTH(:payrolldate) AND YEAR(inv.date)=YEAR(:payrolldate) GROUP BY emp.doc_no) base",nativeQuery = true)
+    List<Map<String,Object>> findAllSalaryByPayroll(@Param("payrolldate") java.sql.Date payrolldate);
 
 }

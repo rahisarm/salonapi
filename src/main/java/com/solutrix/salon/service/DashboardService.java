@@ -1,6 +1,8 @@
 package com.solutrix.salon.service;
 
 import com.solutrix.salon.dto.DashboardDTO;
+import com.solutrix.salon.entity.Expense;
+import com.solutrix.salon.entity.InvoiceMaster;
 import com.solutrix.salon.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -126,20 +128,47 @@ public class DashboardService {
         return monthsList;
     }
 
+    public DashboardDTO getPayrollData(DashboardDTO dashboardDTO){
+        DashboardDTO payrollData = new DashboardDTO();
+
+        List<Map<String,Object>> payrolllist=invoiceMasterRepo.findAllSalaryByPayroll(dashboardDTO.getPayrolldate());
+        payrollData.setPayrollList(payrolllist);
+        return payrollData;
+    }
+
     public DashboardDTO getDailyCounterData(DashboardDTO dashboardDTO) {
         DashboardDTO dailyCounterData = new DashboardDTO();
 
-        DashboardDTO invdailydata=invoiceMasterRepo.findDailyInvCounter(dashboardDTO.getDailydate());
-        DashboardDTO expdailydata=expenseRepo.findDailyExpCounter(dashboardDTO.getDailydate());
+        //DashboardDTO invdailydata=invoiceMasterRepo.findDailyInvCounter(dashboardDTO.getDailydate());
+        List<InvoiceMaster> dailyinvoices=invoiceMasterRepo.findAllByDate(dashboardDTO.getDailydate());
+        List<Expense> dailyexpenses=expenseRepo.findAllByDate(dashboardDTO.getDailydate());
 
-        dailyCounterData.setDailyexpcard(expdailydata.getDailyexpcard());
-        dailyCounterData.setDailyexpcash(expdailydata.getDailyexpcash());
-        dailyCounterData.setDailyexpcredit(expdailydata.getDailyexpcredit());
-        dailyCounterData.setDailyexptotal(dailyCounterData.getDailyexpcash()+expdailydata.getDailyexpcard());
+        dailyinvoices.forEach(invoice -> {
+            if(invoice.getPaytype()==1){
+                dailyCounterData.setDailyinvcash(dailyCounterData.getDailyinvcash()+invoice.getTaxtotal());
+            }
+            else if(invoice.getPaytype()==6){
+                dailyCounterData.setDailyinvcredit(dailyCounterData.getDailyinvcredit()+invoice.getTaxtotal());
+            }
+            else{
+                dailyCounterData.setDailyinvcard(dailyCounterData.getDailyinvcard()+invoice.getTaxtotal());
+            }
+        });
 
-        dailyCounterData.setDailyinvcard(invdailydata.getDailyinvcard());
-        dailyCounterData.setDailyinvcash(invdailydata.getDailyinvcash());
-        dailyCounterData.setDailyinvcredit(invdailydata.getDailyinvcredit());
+        dailyexpenses.forEach(expense-> {
+            if(expense.getPaytype()==1){
+                dailyCounterData.setDailyexpcash(dailyCounterData.getDailyexpcash()+expense.getNettotal());
+            }
+            else if(expense.getPaytype()==6){
+                dailyCounterData.setDailyexpcredit(dailyCounterData.getDailyexpcredit()+expense.getNettotal());
+            }
+            else{
+                dailyCounterData.setDailyexpcard(dailyCounterData.getDailyexpcard()+expense.getNettotal());
+            }
+        });
+
+        dailyCounterData.setDailyexptotal(dailyCounterData.getDailyexpcash()+dailyCounterData.getDailyexpcard());
+
         dailyCounterData.setDailyinvtotal(dailyCounterData.getDailyinvcash()+dailyCounterData.getDailyinvcard());
 
         return dailyCounterData;

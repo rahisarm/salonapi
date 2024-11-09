@@ -28,7 +28,7 @@ public interface ExpenseRepo extends JpaRepository<Expense,Integer> {
     @Query("select round(sum(coalesce(i.nettotal,0)),2) from Expense i where i.date>=:fromdate and i.date<=:todate")
     Double findExpenseAllBranch(@Param("fromdate") java.sql.Date fromdate,@Param("todate") java.sql.Date todate);
 
-    @Query(value = "SELECT DATE_FORMAT(exp.date, '%b-%y') as month,SUM(exp.taxtotal) as totalExpense FROM my_expense exp WHERE exp.date>=:fromdate and exp.date<=:todate and exp.brhid=:brhid GROUP BY DATE_FORMAT(exp.date, '%b-%y')", nativeQuery = true)
+    @Query(value = "SELECT DATE_FORMAT(exp.date, '%b-%y') as month,SUM(exp.total) as totalExpense FROM my_expense exp WHERE exp.date>=:fromdate and exp.date<=:todate and exp.brhid=:brhid GROUP BY DATE_FORMAT(exp.date, '%b-%y')", nativeQuery = true)
     List<Object[]> findExpenseByMonth(@Param("fromdate") java.sql.Date fromdate,@Param("todate") java.sql.Date todate,@Param("brhid") int brhid);
 
     @Query(value = "SELECT DATE_FORMAT(exp.date, '%b-%y') as month,SUM(exp.total) as totalExpense FROM my_expense exp WHERE exp.date>=:fromdate and exp.date<=:todate GROUP BY DATE_FORMAT(exp.date, '%b-%y')", nativeQuery = true)
@@ -48,4 +48,6 @@ public interface ExpenseRepo extends JpaRepository<Expense,Integer> {
 
     @Query("select round (coalesce(sum(case when m.paytype=1 then m.nettotal else 0.0 end),0),2) as dailyexpcash,round (coalesce(sum(case when m.paytype=6 then m.nettotal else 0.0 end),0),2) as dailyexpcredit,round (coalesce(sum(case when m.paytype not in (1,6) then m.nettotal else 0.0 end),0),2) as dailyexpcard from Expense m where m.date=:dailydate")
     DashboardDTO findDailyExpCounter(@Param("dailydate") java.sql.Date dailydate);
+
+    List<Expense> findAllByDate(@Param("dailydate") java.sql.Date dailydate);
 }

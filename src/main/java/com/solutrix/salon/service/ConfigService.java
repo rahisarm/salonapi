@@ -16,4 +16,8 @@ public class ConfigService {
     public List<Config> getAll() {
         return repo.findAll();
     }
+
+    public List<Config> updateConfigs(List<Config> configs) {
+        return repo.saveAll(configs);
+    }
 }

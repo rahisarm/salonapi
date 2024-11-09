@@ -27,4 +27,10 @@ public class DashboardController {
         DashboardDTO dashboardData = dashboardService.getDailyCounterData(dashboardDTO);
         return ResponseEntity.ok(dashboardData);
     }
+
+    @PostMapping("/PayrollProcess")
+    public ResponseEntity<DashboardDTO> getPayrollData(@RequestBody DashboardDTO dashboardDTO) {
+        DashboardDTO dashboardData = dashboardService.getPayrollData(dashboardDTO);
+        return ResponseEntity.ok(dashboardData);
+    }
 }

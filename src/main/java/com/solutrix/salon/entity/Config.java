@@ -23,4 +23,5 @@ public class Config {
     private int method;
     private String configvalue;
     private String description;
+    private String uitype;
 }
