@@ -1,6 +1,7 @@
 package com.solutrix.salon.service;
 
 import com.solutrix.salon.dto.DashboardDTO;
+import com.solutrix.salon.entity.DailyBalance;
 import com.solutrix.salon.entity.Expense;
 import com.solutrix.salon.entity.InvoiceMaster;
 import com.solutrix.salon.repository.*;
@@ -30,6 +31,10 @@ public class DashboardService {
 
     @Autowired
     private EmployeeRepo employeeRepo;
+
+    @Autowired
+    private DailyBalRepo dailyBalRepo;
+
 
     public DashboardDTO getDashboardData(DashboardDTO dto) {
         DashboardDTO dashboardDTO = new DashboardDTO();
@@ -172,5 +177,49 @@ public class DashboardService {
         dailyCounterData.setDailyinvtotal(dailyCounterData.getDailyinvcash()+dailyCounterData.getDailyinvcard());
 
         return dailyCounterData;
+    }
+
+    public DashboardDTO getDailyBalanceData(DashboardDTO dashboardDTO) {
+        Optional<DailyBalance> existbaldata=dailyBalRepo.findByDate(dashboardDTO.getDailybaldate());
+        DailyBalance dailyBalance=new DailyBalance();
+        if(existbaldata.isPresent()){
+            dailyBalance.setDocno(existbaldata.get().getDocno());
+            dailyBalance.setDate(existbaldata.get().getDate());
+        }
+        else {
+            Optional<Integer> maxDocNo = dailyBalRepo.findMaxDocNo();
+            dailyBalance.setDocno(maxDocNo.orElse(0) + 1);
+            dailyBalance.setDate(dashboardDTO.getDailybaldate());
+        }
+        Double dailyinvoice=dailyBalRepo.findInvoiceByDate(dashboardDTO.getDailybaldate(),dashboardDTO.getBrhid());
+        Double dailyexpense=dailyBalRepo.findExpenseByDate(dashboardDTO.getDailybaldate(),dashboardDTO.getBrhid());
+        System.out.println(dailyinvoice+"::"+dailyexpense);
+        Double dailybal=dailyinvoice-dailyexpense;
+        Double dailyopenbalance=dailyBalRepo.findLastClosingBalance(dashboardDTO.getDailybaldate(),dashboardDTO.getBrhid());
+        Double dailyclosingbalance=dailyopenbalance+dailybal;
+
+        dailyBalance.setBrhid(dashboardDTO.getBrhid());
+        dailyBalance.setUserid(dashboardDTO.getUserid());
+        dailyBalance.setOpenbalance(dailyopenbalance);
+        dailyBalance.setClosingbalance(dailyclosingbalance);
+        dailyBalance.setDailyinvoice(dailyinvoice);
+        dailyBalance.setDailyexpense(dailyexpense);
+        dailyBalance.setDailybalance(dailybal);
+        dailyBalRepo.save(dailyBalance);
+
+        Map<String,Object> objdailybalance=new HashMap<>();
+        objdailybalance.put("date",dashboardDTO.getDailybaldate());
+        objdailybalance.put("openingbalance",dailyopenbalance);
+        objdailybalance.put("closingbalance",dailyclosingbalance);
+        objdailybalance.put("dailyinvoice",dailyinvoice);
+        objdailybalance.put("dailyexpense",dailyexpense);
+        objdailybalance.put("dailybalance",dailybal);
+        objdailybalance.put("docno",dailyBalance.getDocno());
+
+        List<Map<String,Object>> dailybalancelist=new ArrayList<>();
+        dailybalancelist.add(objdailybalance);
+
+        dashboardDTO.setDailybalList(dailybalancelist);
+        return dashboardDTO;
     }
 }

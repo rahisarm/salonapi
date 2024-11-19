@@ -22,12 +22,14 @@ public class DashboardDTO {
     private java.sql.Date fromdate;
     private java.sql.Date todate;
     private java.sql.Date payrolldate;
+    private java.sql.Date dailybaldate;
 
     private Integer reportbrhid;
     private List<Map<String, Object>> incomeexpensechart;
     private List<Map<String, Object>> expTypeChart;
     private List<Map<String, Object>> expAccountChart;
     private List<Map<String,Object>> payrollList;
+    private List<Map<String,Object>> dailybalList;
 
     private java.sql.Date dailydate;
     private Double dailyinvcash=0.0;
