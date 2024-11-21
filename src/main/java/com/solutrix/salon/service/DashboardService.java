@@ -35,7 +35,6 @@ public class DashboardService {
     @Autowired
     private DailyBalRepo dailyBalRepo;
 
-
     public DashboardDTO getDashboardData(DashboardDTO dto) {
         DashboardDTO dashboardDTO = new DashboardDTO();
         //System.out.println(dto);
@@ -43,7 +42,7 @@ public class DashboardService {
         Double totalinvoice= 0.0;
         Double totalexpense= 0.0;
         Integer activeEmployees= 0;
-        Integer newClients= 0;
+        Integer newClients= clientRepo.countAllByDateBetween(dto.getFromdate(),dto.getTodate(),dto.getReportbrhid());
         List<Object[]> incomeResults=new ArrayList<Object[]>();
         List<Object[]> expenseResults=new ArrayList<Object[]>();
 
@@ -88,7 +87,9 @@ public class DashboardService {
             incomeexpensechartdata.add(map);
         });
 
-        System.out.println("Branch:"+dto.getReportbrhid());
+        System.out.println("Branch:"+dto.getReportbrhid()+"::"+"From:"+dto.getFromdate()+"::"+"To:"+dto.getTodate());
+        System.out.println(expenseRepo.findExpenseByAccount(dto.getFromdate(),dto.getTodate(),dto.getReportbrhid()));
+
         dashboardDTO.setExpAccountChart(expenseRepo.findExpenseByAccount(dto.getFromdate(),dto.getTodate(),dto.getReportbrhid()));
         dashboardDTO.setExpTypeChart(expenseRepo.findExpenseByAccount(dto.getFromdate(),dto.getTodate(),dto.getReportbrhid()));
 

@@ -22,4 +22,7 @@ public interface ClientRepo extends JpaRepository<Client,Integer> {
     Optional<Client> findByRefname(String refname);
 
     List<Client> findAllByBrhidIsAndAndStatusNot(Integer brhid, Integer status);
+
+    @Query(value = "select count (*) from Client where date between :fromdate and :todate and (:brhid IS NULL OR brhid=:brhid)")
+    Integer countAllByDateBetween(@Param("fromdate") java.sql.Date fromdate, @Param("todate") java.sql.Date todate,@Param("brhid") Integer brhid);
 }
