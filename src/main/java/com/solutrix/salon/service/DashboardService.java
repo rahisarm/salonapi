@@ -197,6 +197,8 @@ public class DashboardService {
         System.out.println(dailyinvoice+"::"+dailyexpense);
         Double dailybal=dailyinvoice-dailyexpense;
         Double dailyopenbalance=dailyBalRepo.findLastClosingBalance(dashboardDTO.getDailybaldate(),dashboardDTO.getBrhid());
+        dailyopenbalance=dailyopenbalance==null?0:dailyopenbalance;
+
         Double dailyclosingbalance=dailyopenbalance+dailybal;
 
         dailyBalance.setBrhid(dashboardDTO.getBrhid());
